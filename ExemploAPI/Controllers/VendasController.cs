@@ -78,6 +78,7 @@ namespace ExemploAPI.Controllers
 
             return NoContent();
         }
+
         [Authorize]
         // POST: api/Vendas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -85,15 +86,6 @@ namespace ExemploAPI.Controllers
         public async Task<ActionResult<Venda>> PostVenda(Venda venda)
         {
             var ultimaVenda = _context.Vendas.OrderBy(v => v.DataVenda).FirstOrDefaultAsync().Result;
-
-            // Obter o ID do usuário de forma mais segura
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("Usuário não autenticado");
-            }
-            venda.UserId = userId;
-
             if (ultimaVenda == null)
             {
                 venda.NumeroPedido = 1;
@@ -104,6 +96,17 @@ namespace ExemploAPI.Controllers
                 venda.NumeroPedido = ultimaVenda.NumeroPedido += 1;
                 venda.TotalVenda = 0;
             }
+
+            // Obter o ID do usuário de forma mais segura
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Usuário não autenticado");
+            }
+            venda.UserId = userId;
+
+            var cliente = await _context.Clientes.FindAsync(venda.ClienteId);
+            venda.Cliente = cliente;
 
             _context.Vendas.Add(venda);
             await _context.SaveChangesAsync();

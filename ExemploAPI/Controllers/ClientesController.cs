@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ExemploAPI.Controllers
 {
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ClientesController : ControllerBase

@@ -66,9 +66,11 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+
 // Serviço de Autenticação
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
+
 
 var app = builder.Build();
 
