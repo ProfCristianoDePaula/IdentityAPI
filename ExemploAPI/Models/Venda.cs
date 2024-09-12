@@ -11,6 +11,7 @@ namespace ExemploAPI.Models
 
         public Guid ClienteId { get; set; }
         public Cliente? Cliente { get; set; }
+        public string? UserId { get; set; }
 
     }
 }

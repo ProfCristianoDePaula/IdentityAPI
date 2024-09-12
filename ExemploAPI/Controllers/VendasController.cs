@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using ExemploAPI.Data;
 using ExemploAPI.Models;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ExemploAPI.Controllers
 {
@@ -16,10 +19,12 @@ namespace ExemploAPI.Controllers
     public class VendasController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public VendasController(ApplicationDbContext context)
+        public VendasController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: api/Vendas
@@ -73,13 +78,21 @@ namespace ExemploAPI.Controllers
 
             return NoContent();
         }
-
+        [Authorize]
         // POST: api/Vendas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Venda>> PostVenda(Venda venda)
         {
             var ultimaVenda = _context.Vendas.OrderBy(v => v.DataVenda).FirstOrDefaultAsync().Result;
+
+            // Obter o ID do usuário de forma mais segura
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Usuário não autenticado");
+            }
+            venda.UserId = userId;
 
             if (ultimaVenda == null)
             {
