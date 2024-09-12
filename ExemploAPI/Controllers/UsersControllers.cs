@@ -16,10 +16,10 @@ namespace ExemploAPI.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            var user = await _userManager.FindByNameAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
                 return Ok(user);
