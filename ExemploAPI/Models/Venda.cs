@@ -6,7 +6,7 @@ namespace ExemploAPI.Models
     {
         public Guid VendaId { get; set; }
         public DateTime DataVenda { get; set; } = DateTime.Now;
-        public int NumeroPedido { get; set; }
+        public int? NumeroPedido { get; set; }
         public double? TotalVenda { get; set; }
 
         public Guid ClienteId { get; set; }

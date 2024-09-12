@@ -22,7 +22,7 @@ namespace ExemploAPI.Controllers
         {
             _context = context;
         }
-        [Authorize]
+
         // GET: api/Clientes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
@@ -101,6 +101,20 @@ namespace ExemploAPI.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpPut("alternar/{id}")]
+        public async Task<IActionResult> AlternarCadastro(Guid id)
+        {
+            var cliente = await _context.Clientes.FindAsync(id);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+            cliente.CadastroAtivo = !cliente.CadastroAtivo;
+            _context.Clientes.Update(cliente);
+            await _context.SaveChangesAsync();
+            return Ok(cliente);
         }
 
         private bool ClienteExists(Guid id)

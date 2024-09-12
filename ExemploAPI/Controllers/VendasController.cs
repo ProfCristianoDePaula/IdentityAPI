@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ExemploAPI.Data;
 using ExemploAPI.Models;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace ExemploAPI.Controllers
 {
@@ -78,6 +79,19 @@ namespace ExemploAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Venda>> PostVenda(Venda venda)
         {
+            var ultimaVenda = _context.Vendas.OrderBy(v => v.DataVenda).FirstOrDefaultAsync().Result;
+
+            if (ultimaVenda == null)
+            {
+                venda.NumeroPedido = 1;
+                venda.TotalVenda = 0;
+            }
+            else
+            {
+                venda.NumeroPedido = ultimaVenda.NumeroPedido += 1;
+                venda.TotalVenda = 0;
+            }
+
             _context.Vendas.Add(venda);
             await _context.SaveChangesAsync();
 

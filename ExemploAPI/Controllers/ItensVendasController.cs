@@ -78,6 +78,18 @@ namespace ExemploAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ItensVenda>> PostItensVenda(ItensVenda itensVenda)
         {
+            // Busca qual produto esta sendo vendido
+            var produto = _context.Produtos.Where(p => p.ProdutoId == itensVenda.ProdutoId).FirstAsync().Result;
+
+            //Verificar o total do item ( qtd vendida X preço unitario)
+            itensVenda.TotalItens = produto.Preco * itensVenda.QtdadeItem;
+
+            // Alterar na venda o valor => ValorTotalVenda + TotalItens
+            var venda = _context.Vendas.Where(v => v.VendaId == itensVenda.VendaId).FirstOrDefaultAsync().Result;
+            venda.TotalVenda += itensVenda.TotalItens;
+            itensVenda.Venda = venda;
+
+            _context.Vendas.Update(venda);
             _context.ItensVenda.Add(itensVenda);
             await _context.SaveChangesAsync();
 
