@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ExemploAPI.Controllers
 {
@@ -129,6 +130,21 @@ namespace ExemploAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("filtrarPorPedido/{numeroPedido}")]
+        public async Task<IActionResult> NumeroPedido(string numeroPedido)
+        {
+            var listaPedidos = await _context.Vendas.Where(v => v.NumeroPedido.ToString().Contains(numeroPedido)).ToListAsync();
+
+            if (listaPedidos.Count() > 0)
+            {
+                return Ok(listaPedidos);
+            }
+            return NotFound();
+        }
+
+
+
 
         private bool VendaExists(Guid id)
         {

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ExemploAPI.Controllers
 {
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class ClientesController : ControllerBase
@@ -115,6 +115,31 @@ namespace ExemploAPI.Controllers
             _context.Clientes.Update(cliente);
             await _context.SaveChangesAsync();
             return Ok(cliente);
+        }
+
+        [HttpGet("/filtrar/{nome}")]
+        public async Task<IActionResult> BuscarNome(string nome)
+        {
+            // Criar um filtro por nome na tabela Clientes
+            var listaClientes = _context.Clientes.Where(c => c.ClienteNome.Contains(nome)).ToList();
+            if (listaClientes.Count > 0)
+            {
+                return Ok(listaClientes);
+            }
+            return NotFound(nome);
+        }
+
+        [HttpGet("/paginacao/{numeroPagina}/{qtdadeRegistros}")]
+        public async Task<IActionResult> Paginacao(int numeroPagina, int qtdadeRegistros)
+        {
+            var totalItens = await _context.Clientes.CountAsync();
+            var pularRegistros = (numeroPagina - 1) * qtdadeRegistros;
+            var listaClientes = await _context.Clientes.Skip(pularRegistros).Take(qtdadeRegistros).ToListAsync();
+            if (listaClientes.Count >= 0)
+            {
+                return Ok(listaClientes);
+            }
+            return NoContent();
         }
 
         private bool ClienteExists(Guid id)
