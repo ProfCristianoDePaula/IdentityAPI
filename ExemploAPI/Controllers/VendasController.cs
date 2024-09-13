@@ -131,6 +131,7 @@ namespace ExemploAPI.Controllers
             return NoContent();
         }
 
+        // Busca por numero de pedido
         [HttpGet("filtrarPorPedido/{numeroPedido}")]
         public async Task<IActionResult> NumeroPedido(string numeroPedido)
         {
@@ -144,7 +145,29 @@ namespace ExemploAPI.Controllers
         }
 
 
+        //Buscar as vendas por uma data especifica
+        [HttpGet("filtarPorData/{dataVenda}")]
+        public async Task<IActionResult> BuscaDataVenda(string dataVenda)
+        {
+            var listaPedidos = await _context.Vendas.Where(v => v.DataVenda.ToString().Contains(dataVenda)).ToListAsync();
+            if (listaPedidos.Count() > 0)
+            {
+                return Ok(listaPedidos);
+            }
+            return NotFound();
+        }
 
+        // Busca por um Intervalo de Datas/Horas 
+        [HttpGet("filtrarIntervaloData/{dataInicio}/{dataFim}")]
+        public async Task<IActionResult> BuscaPorIntervalo(DateTime dataInicio, DateTime dataFim)
+        {
+            var listaPedidos = await _context.Vendas.Where(v => v.DataVenda >= dataInicio && v.DataVenda <= dataFim).ToListAsync();
+            if (listaPedidos.Count > 0)
+            {
+                return Ok(listaPedidos);
+            }
+            return NotFound();
+        }
 
         private bool VendaExists(Guid id)
         {

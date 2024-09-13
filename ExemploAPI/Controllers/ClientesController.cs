@@ -129,6 +129,7 @@ namespace ExemploAPI.Controllers
             return NotFound(nome);
         }
 
+        // Metodo para paginacao de registro de clientes
         [HttpGet("/paginacao/{numeroPagina}/{qtdadeRegistros}")]
         public async Task<IActionResult> Paginacao(int numeroPagina, int qtdadeRegistros)
         {
