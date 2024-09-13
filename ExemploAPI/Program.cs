@@ -1,4 +1,7 @@
 using ExemploAPI.Data;
+using ExemploAPI.Interfaces;
+using ExemploAPI.Models;
+using ExemploAPI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -71,6 +74,22 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
+// Serviço de Configuração e Envio de Emails
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
+// Criar um unica instancia da config do email
+builder.Services.AddSingleton(emailConfig);
+// Adicionar a Interface ao Escopo do Projeto
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+// Codigo para trabalhar o formulario de envio de e-mails no ASP.NET Core
+/*********
+ builder.Services.Configure<FormOptions>(o =>
+{
+    o.ValueLengthLimit = int.MaxValue;
+    o.MultipartBodyLengthLimit = int.MaxValue;
+    o.MemoryBufferThreshold = int.MaxValue;
+});
+*********/
 
 var app = builder.Build();
 

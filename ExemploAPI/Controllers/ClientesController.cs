@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ExemploAPI.Data;
 using ExemploAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using ExemploAPI.Interfaces;
 
 namespace ExemploAPI.Controllers
 {
@@ -17,10 +18,12 @@ namespace ExemploAPI.Controllers
     public class ClientesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailSender _emailSender;
 
-        public ClientesController(ApplicationDbContext context)
+        public ClientesController(ApplicationDbContext context, IEmailSender emailSender)
         {
             _context = context;
+            _emailSender = emailSender;
         }
 
         // GET: api/Clientes
@@ -82,6 +85,11 @@ namespace ExemploAPI.Controllers
         public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
         {
             _context.Clientes.Add(cliente);
+
+
+            var message = new Mensagem(new string[] { "cristiano.paula@sp.senai.br" }, "Test mail with Attachments", "email sem anexo.", null);
+            await _emailSender.SendEmailAsync(message);
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCliente", new { id = cliente.ClienteId }, cliente);
